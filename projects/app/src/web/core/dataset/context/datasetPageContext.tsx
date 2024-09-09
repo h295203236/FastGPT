@@ -124,50 +124,12 @@ export const DatasetPageContextProvider = ({
   const [checkedDatasetTag, setCheckedDatasetTag] = useState<DatasetTagType[]>([]);
   const [searchTagKey, setSearchTagKey] = useState('');
 
-  const { runAsync: loadAllDatasetTags, data: allDatasetTags = [] } = useRequest2(
-    async () => {
-      if (!feConfigs?.isPlus || !datasetDetail._id) return [];
+  const [allDatasetTags, setAllDatasetTags] = useState<DatasetTagType[]>([]);
 
-      const { list } = await getAllTags(datasetDetail._id);
-      return list;
-    },
-    {
-      manual: false,
-      refreshDeps: [datasetDetail._id]
-    }
-  );
-  const { data: searchDatasetTagsResult = [] } = useRequest2(
-    async () => {
-      if (!searchTagKey) return allDatasetTags;
-      const { list } = await getDatasetCollectionTags({
-        datasetId: datasetDetail._id,
-        searchText: searchTagKey,
-        current: 1,
-        pageSize: 15
-      });
-      return list;
-    },
-    {
-      manual: false,
-      throttleWait: 300,
-      refreshDeps: [datasetDetail._id, searchTagKey, allDatasetTags]
-    }
-  );
-  const { runAsync: onCreateCollectionTag, loading: isCreateCollectionTagLoading } = useRequest2(
-    (tag: string) =>
-      postCreateDatasetCollectionTag({
-        datasetId: datasetDetail._id,
-        tag
-      }),
-    {
-      refreshDeps: [datasetDetail._id],
-      onSuccess() {
-        loadAllDatasetTags();
-      },
-      successToast: t('common:common.Create Success'),
-      errorToast: t('common:common.Create Failed')
-    }
-  );
+  const loadAllDatasetTags = async ({ id }: { id: string }) => {
+    const list = await getAllTags(id);
+    setAllDatasetTags(list || []);
+  };
 
   // global queue
   const { data: { vectorTrainingCount = 0, agentTrainingCount = 0 } = {} } = useQuery(
