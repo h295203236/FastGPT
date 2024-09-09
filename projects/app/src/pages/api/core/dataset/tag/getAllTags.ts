@@ -5,8 +5,11 @@ import { MongoDatasetCollectionTags } from '@fastgpt/service/core/dataset/tag/sc
 
 /* get all dataset tags by datasetId */
 async function handler(req: NextApiRequest): Promise<DatasetTagType[]> {
-  const { datasetId } = req.query;
-  const allDatasetTags = await MongoDatasetCollectionTags.find({ datasetId }).lean();
+  const { teamId } = req.query;
+  if (!teamId) {
+    return [];
+  }
+  const allDatasetTags = await MongoDatasetCollectionTags.find({ datasetId: teamId }).lean();
   if (!allDatasetTags) {
     return [];
   }

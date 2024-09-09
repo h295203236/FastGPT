@@ -28,7 +28,7 @@ type PutifileFileItemResp = {
 /**
  * 标签响应
  */
-type PutifileSTagItemResp = {
+type PutifileTagItemResp = {
   tagId: string;
   tagName: string;
   tagValue: string;
@@ -68,8 +68,8 @@ async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileIt
   return fileResp.data;
 }
 
-async function listTags(): Promise<PutifileSTagItemResp[]> {
-  const re = await GET<PutifileResp<PutifileSTagItemResp[]>>(
+async function listTags(): Promise<PutifileTagItemResp[]> {
+  const re = await GET<PutifileResp<PutifileTagItemResp[]>>(
     `${PUTI_URL}/klg/tag/list`,
     {
       tenantId: PUTI_TENANT
@@ -85,4 +85,4 @@ async function listTags(): Promise<PutifileSTagItemResp[]> {
 
 // 导出上述变量
 export { listChangedFiles, getFileUrl, listTags };
-export type { PutifileResp, PutifileFileItemResp, PutifileSTagItemResp, ListPutifileReq };
+export type { PutifileResp, PutifileFileItemResp, PutifileTagItemResp, ListPutifileReq };

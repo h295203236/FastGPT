@@ -145,8 +145,8 @@ export const getDatasetCollectionTags = (
 ) => POST<PaginationResponse<DatasetTagType>>(`/core/dataset/tag/list`, data);
 export const getTagUsage = (datasetId: string) =>
   GET<TagUsageType[]>(`/core/dataset/tag/tagUsage?datasetId=${datasetId}`);
-export const getAllTags = (datasetId: string) =>
-  GET<DatasetTagType[]>(`/core/dataset/tag/getAllTags?datasetId=${datasetId}`);
+export const getAllTags = (teamId: string) =>
+  GET<DatasetTagType[]>(`/core/dataset/tag/getAllTags?teamId=${teamId}`);
 export const getScrollCollectionList = (data: GetScrollCollectionsProps) =>
   GET<PaginationResponse<DatasetCollectionsListItemType>>(
     `/core/dataset/collection/scrollList`,
