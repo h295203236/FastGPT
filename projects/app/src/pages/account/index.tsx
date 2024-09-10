@@ -53,15 +53,15 @@ const Account = ({ currentTab }: { currentTab: TabEnum }) => {
         ]
       : []),
     // ...(feConfigs?.show_pay && userInfo?.team?.permission.hasWritePer
-    ...(feConfigs?.show_pay || userInfo?.team?.permission.hasWritePer
-      ? [
-          {
-            icon: 'support/bill/payRecordLight',
-            label: t('user:bill_and_invoices'),
-            value: TabEnum.bill
-          }
-        ]
-      : []),
+    // ...(feConfigs?.show_pay || userInfo?.team?.permission.hasWritePer
+    //   ? [
+    //       {
+    //         icon: 'support/bill/payRecordLight',
+    //         label: t('user:bill_and_invoices'),
+    //         value: TabEnum.bill
+    //       }
+    //     ]
+    //   : []),
 
     ...(feConfigs?.show_promotion
       ? [
@@ -176,7 +176,7 @@ const Account = ({ currentTab }: { currentTab: TabEnum }) => {
             {currentTab === TabEnum.info && <UserInfo />}
             {currentTab === TabEnum.promotion && <Promotion />}
             {currentTab === TabEnum.usage && <UsageTable />}
-            {currentTab === TabEnum.bill && <BillAndInvoice />}
+            {/* {currentTab === TabEnum.bill && <BillAndInvoice />} */}
             {currentTab === TabEnum.individuation && <Individuation />}
             {currentTab === TabEnum.inform && <InformTable />}
             {currentTab === TabEnum.apikey && <ApiKeyTable />}

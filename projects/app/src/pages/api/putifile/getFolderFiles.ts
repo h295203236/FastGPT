@@ -1,5 +1,5 @@
 import { NextAPI } from '@/service/middleware/entry';
-import { listChangedFiles } from './utils';
+import { listChangedFiles } from './controller';
 import { NextApiRequest } from 'next';
 
 const supportFileTypes = [

@@ -1,5 +1,5 @@
 import { NextAPI } from '@/service/middleware/entry';
-import { listTags, PutifileTagItemResp } from './utils';
+import { listTags, PutifileTagItemResp } from './controller';
 
 /**
  * putifile 标签列表获取

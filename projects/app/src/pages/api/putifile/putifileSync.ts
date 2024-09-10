@@ -6,7 +6,7 @@ import { ReadPermissionVal } from '@fastgpt/global/support/permission/constant';
 import { NextAPI } from '@/service/middleware/entry';
 import { ApiRequestProps } from '@fastgpt/service/type/next';
 import { CommonErrEnum } from '@fastgpt/global/common/error/code/common';
-import { listChangedFiles } from './utils';
+import { listChangedFiles } from './controller';
 import { MongoDatasetCollection } from '@fastgpt/service/core/dataset/collection/schema';
 import {
   DatasetCollectionTypeEnum,

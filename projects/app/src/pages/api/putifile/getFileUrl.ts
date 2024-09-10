@@ -1,5 +1,5 @@
 import { NextAPI } from '@/service/middleware/entry';
-import { getFileUrl } from './utils';
+import { getFileUrl } from './controller';
 import { NextApiRequest } from 'next';
 
 /**
