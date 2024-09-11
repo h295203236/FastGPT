@@ -1,7 +1,6 @@
 import { mongoSessionRun } from '@fastgpt/service/common/mongo/sessionRun';
 import { ApiRequestProps } from '@fastgpt/service/type/next';
 import { NextAPI } from '@/service/middleware/entry';
-import { getTeam } from '../team/controller';
 import { MongoDataset } from '@fastgpt/service/core/dataset/schema';
 import { MongoDatasetCollection } from '@fastgpt/service/core/dataset/collection/schema';
 import { MongoDatasetCollectionTags } from '@fastgpt/service/core/dataset/tag/schema';
@@ -10,10 +9,11 @@ import { MongoApp } from '@fastgpt/service/core/app/schema';
 import { MongoAppVersion } from '@fastgpt/service/core/app/version/schema';
 import { MongoChat } from '@fastgpt/service/core/chat/chatSchema';
 import { MongoChatItem } from '@fastgpt/service/core/chat/chatItemSchema';
-import { getUser } from '../user/controller';
 import { MongoOpenApi } from '@fastgpt/service/support/openapi/schema';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 import { MongoImage } from '@fastgpt/service/common/file/image/schema';
+import { getTeam } from '../team/controller';
+import { getUser } from '../user/controller';
 
 type TransferTreamDataBody = {
   olderTeamId: string;
@@ -22,7 +22,7 @@ type TransferTreamDataBody = {
 };
 
 /**
- * 创建用户
+ * 迁移租户数据
  * @param req 请求
  */
 async function handler(req: ApiRequestProps<TransferTreamDataBody>): Promise<boolean> {

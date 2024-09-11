@@ -1,5 +1,4 @@
 import { GET } from '@fastgpt/service/common/api/httpRequest';
-import { te } from 'date-fns/locale';
 
 const PUTI_URL: string = process.env.PUTI_URL || '';
 const PUTI_KEY: string = process.env.PUTI_KEY || '';
