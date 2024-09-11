@@ -1,6 +1,8 @@
 import { NextAPI } from '@/service/middleware/entry';
 import { listChangedFiles } from './controller';
 import { NextApiRequest } from 'next';
+import { authJWT } from '@fastgpt/service/support/permission/controller';
+import { getTokenFromCookie } from './tool';
 
 const supportFileTypes = [
   'txt',
@@ -51,8 +53,15 @@ async function handler(req: NextApiRequest): Promise<PutifileFileItemResp[]> {
     return Promise.reject('folder is required');
   }
 
+  // 获取token
+  const token = getTokenFromCookie(req.headers);
+  if (!token) {
+    throw new Error('token not found, cannot get the teamId');
+  }
+  const { teamId } = await authJWT(token);
+
   // 获取文件列表
-  const files = await listChangedFiles({ folder, lastSyncTime: 0 });
+  const files = await listChangedFiles({ tenantId: teamId, folder, lastSyncTime: 0 });
   console.log('====> filesResponse:', files);
   if (!files || files.length === 0) {
     return [];

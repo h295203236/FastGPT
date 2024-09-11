@@ -97,6 +97,7 @@ async function handler(req: ApiRequestProps<PutifileSyncProps>): Promise<boolean
     folder = folder + '/';
   }
   const files = await listChangedFiles({
+    tenantId: teamId,
     folder,
     lastSyncTime: dataset.putifileConfig?.lastSyncTime || 0
   });

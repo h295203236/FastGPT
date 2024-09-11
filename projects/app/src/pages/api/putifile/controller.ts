@@ -2,7 +2,6 @@ import { GET } from '@fastgpt/service/common/api/httpRequest';
 
 const PUTI_URL: string = process.env.PUTI_URL || '';
 const PUTI_KEY: string = process.env.PUTI_KEY || '';
-const PUTI_TENANT: string = process.env.PUTI_TENANT || '';
 
 type PutifileResp<T> = {
   code: number;
@@ -36,6 +35,7 @@ type PutifileTagItemResp = {
 };
 
 type ListPutifileReq = {
+  tenantId: string;
   folder: string;
   lastSyncTime: number;
 };
@@ -51,11 +51,11 @@ type ListTagsReq = {
 /**
  * 获取文件的临时访问地址
  */
-async function getFileUrl(fileId: string): Promise<string> {
+async function getFileUrl(tenantId: string, fileId: string): Promise<string> {
   const fileResp = await GET<PutifileResp<string>>(
     `${PUTI_URL}/putifile/klg/file/${fileId}/temp-access-url`,
     {},
-    { headers: { 'x-api-key': PUTI_KEY } }
+    { headers: { 'x-api-key': PUTI_KEY, tenantId: tenantId } }
   );
   return fileResp.data;
 }
@@ -69,10 +69,9 @@ async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileIt
   const fileResp = await GET<PutifileResp<PutifileFileItemResp[]>>(
     `${PUTI_URL}/putifile/klg/file/changed`,
     {
-      tenantId: PUTI_TENANT,
       ...params
     },
-    { headers: { 'x-api-key': PUTI_KEY } }
+    { headers: { 'x-api-key': PUTI_KEY, tenantId: params.tenantId } }
   );
   return fileResp.data;
 }
@@ -84,10 +83,9 @@ async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileIt
  */
 async function listTags(req: ListTagsReq): Promise<PutifileTagItemResp[]> {
   const re = await GET<PutifileResp<PutifileTagItemResp[]>>(
-    `${PUTI_URL}/putifile/klg/tag/list`,
+    `${PUTI_URL}/system/tag/list`,
     {
-      keyword: '',
-      tenantId: req.tenantId
+      keyword: ''
     },
     {
       headers: {
