@@ -2,7 +2,7 @@ import { Box, Checkbox, Flex, Input } from '@chakra-ui/react';
 import MyPopover from '@fastgpt/web/components/common/MyPopover';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import MyBox from '@fastgpt/web/components/common/MyBox';
-import { postCreateDatasetCollectionTag, putDatasetCollectionById } from '@/web/core/dataset/api';
+import { postCreateDatasetCollectionTag2, putDatasetCollectionById } from '@/web/core/dataset/api';
 import { useContextSelector } from 'use-context-selector';
 import { DatasetPageContext } from '@/web/core/dataset/context/datasetPageContext';
 import { useTranslation } from 'next-i18next';
@@ -11,7 +11,6 @@ import { useDeepCompareEffect } from 'ahooks';
 import { DatasetCollectionItemType, DatasetTagType } from '@fastgpt/global/core/dataset/type';
 import { isEqual } from 'lodash';
 import { DatasetCollectionsListItemType } from '@/global/core/dataset/type';
-import { useRequest } from '@fastgpt/web/hooks/useRequest';
 
 const TagsPopOver = ({
   currentCollection
@@ -20,6 +19,7 @@ const TagsPopOver = ({
 }) => {
   const { t } = useTranslation();
   const {
+    datasetDetail,
     searchTagKey,
     setSearchTagKey,
     searchDatasetTagsResult,
@@ -188,6 +188,11 @@ const TagsPopOver = ({
         await putDatasetCollectionById({
           id: currentCollection._id,
           tags: checkedTags.map((tag) => tag._id)
+        });
+        await postCreateDatasetCollectionTag2({
+          teamId: datasetDetail.teamId,
+          datasetId: datasetDetail._id,
+          tags: checkedTags
         });
         setCollectionTags(checkedTags.map((tag) => tag._id));
         setIsUpdateLoading(false);

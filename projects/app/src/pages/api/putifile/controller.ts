@@ -1,4 +1,5 @@
 import { GET } from '@fastgpt/service/common/api/httpRequest';
+import { te } from 'date-fns/locale';
 
 const PUTI_URL: string = process.env.PUTI_URL || '';
 const PUTI_KEY: string = process.env.PUTI_KEY || '';
@@ -29,6 +30,7 @@ type PutifileFileItemResp = {
  * 标签响应
  */
 type PutifileTagItemResp = {
+  id: string;
   tagId: string;
   tagName: string;
   tagValue: string;
@@ -40,11 +42,19 @@ type ListPutifileReq = {
 };
 
 /**
+ * 获取标签列表请求
+ */
+type ListTagsReq = {
+  tenantId: string;
+  userId: string;
+};
+
+/**
  * 获取文件的临时访问地址
  */
 async function getFileUrl(fileId: string): Promise<string> {
   const fileResp = await GET<PutifileResp<string>>(
-    `${PUTI_URL}/klg/file/${fileId}/temp-access-url`,
+    `${PUTI_URL}/putifile/klg/file/${fileId}/temp-access-url`,
     {},
     { headers: { 'x-api-key': PUTI_KEY } }
   );
@@ -58,7 +68,7 @@ async function getFileUrl(fileId: string): Promise<string> {
  */
 async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileItemResp[]> {
   const fileResp = await GET<PutifileResp<PutifileFileItemResp[]>>(
-    `${PUTI_URL}/klg/file/changed`,
+    `${PUTI_URL}/putifile/klg/file/changed`,
     {
       tenantId: PUTI_TENANT,
       ...params
@@ -68,15 +78,24 @@ async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileIt
   return fileResp.data;
 }
 
-async function listTags(): Promise<PutifileTagItemResp[]> {
+/**
+ * 获取标签列表
+ * @param req 请求
+ * @returns
+ */
+async function listTags(req: ListTagsReq): Promise<PutifileTagItemResp[]> {
   const re = await GET<PutifileResp<PutifileTagItemResp[]>>(
-    `${PUTI_URL}/klg/tag/list`,
+    `${PUTI_URL}/putifile/klg/tag/list`,
     {
-      tenantId: PUTI_TENANT
+      keyword: '',
+      tenantId: req.tenantId
     },
     {
       headers: {
-        'x-api-key': PUTI_KEY
+        'x-api-key': PUTI_KEY,
+        'Content-Type': 'application/json',
+        tenantId: req.tenantId,
+        userId: '0'
       }
     }
   );

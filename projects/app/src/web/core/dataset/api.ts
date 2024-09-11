@@ -24,7 +24,8 @@ import type {
   PostPutifileSyncParams,
   TextCreateDatasetCollectionParams,
   UpdateDatasetCollectionTagParams,
-  PutifileFileReCreateDatasetCollectionParams
+  PutifileFileReCreateDatasetCollectionParams,
+  CreateCollectionTagParams2
 } from '@fastgpt/global/core/dataset/api.d';
 import type {
   GetTrainingQueueProps,
@@ -52,7 +53,7 @@ import type { UpdateDatasetDataProps } from '@fastgpt/global/core/dataset/contro
 import type { DatasetFolderCreateBody } from '@/pages/api/core/dataset/folder/create';
 import { PaginationProps, PaginationResponse } from '@fastgpt/web/common/fetch/type';
 import { GetScrollCollectionsProps } from '@/pages/api/core/dataset/collection/scrollList';
-import { PutifileSTagItemResp } from '@/pages/api/putifile/utils';
+import { PutifileTagItemResp } from '@/pages/api/putifile/controller';
 
 /* ======================== dataset ======================= */
 export const getDatasets = (data: GetDatasetListBody) =>
@@ -130,6 +131,8 @@ export const postLinkCollectionSync = (collectionId: string) =>
 /* =============================== tag ==================================== */
 
 export const postCreateDatasetCollectionTag = (data: CreateDatasetCollectionTagParams) =>
+  POST(`/core/dataset/tag/create`, data);
+export const postCreateDatasetCollectionTag2 = (data: CreateCollectionTagParams2) =>
   POST(`/core/dataset/tag/create`, data);
 export const postAddTagsToCollections = (data: AddTagsToCollectionsParams) =>
   POST(`/core/dataset/tag/addToCollections`, data);
@@ -209,7 +212,7 @@ export const getPutiFolderFiles = (data: { folder: string }) =>
   }).catch();
 export const getPutifileFileUrl = (fileId: string) =>
   GET<string>(`/putifile/getFileUrl`, { fileId }).catch();
-export const getPutifileTags = () => GET<PutifileSTagItemResp[]>(`/putifile/listTags`).catch();
+export const getPutifileTags = () => GET<PutifileTagItemResp[]>(`/putifile/listTags`).catch();
 
 export const postRecreateDatasetPutifileFileCollection = (
   data: PutifileFileReCreateDatasetCollectionParams

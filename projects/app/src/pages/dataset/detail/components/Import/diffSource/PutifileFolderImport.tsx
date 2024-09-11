@@ -22,7 +22,7 @@ import { useContextSelector } from 'use-context-selector';
 import { DatasetImportContext } from '../Context';
 import { getFileIcon } from '@fastgpt/global/common/file/icon';
 import { getPutifileFileUrl, getPutiFolderFiles } from '@/web/core/dataset/api';
-import { PutifileFileItemResp } from '@/pages/api/putifile/utils';
+import { PutifileFileItemResp } from '@/pages/api/putifile/controller';
 
 const DataProcess = dynamic(() => import('../commonProgress/DataProcess'), {
   loading: () => <Loading fixed={false} />

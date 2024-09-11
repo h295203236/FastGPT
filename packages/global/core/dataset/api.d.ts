@@ -83,6 +83,11 @@ export type CreateDatasetCollectionTagParams = {
   datasetId: string;
   tag: string;
 };
+export type CreateCollectionTagParams2 = {
+  teamId: string;
+  datasetId: string;
+  tags: DatasetTagType[];
+};
 export type AddTagsToCollectionsParams = {
   originCollectionIds: string[];
   collectionIds: string[];
