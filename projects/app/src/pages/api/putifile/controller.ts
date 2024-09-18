@@ -38,7 +38,6 @@ type PutifileTagItemResp = {
 
 type ListPutifileReq = {
   tenantId: string;
-  appId: string;
   folder: string;
   lastSyncTime: number;
 };
