@@ -28,8 +28,8 @@ async function handler(req: NextApiRequest): Promise<DatasetTagType[]> {
     if (tenantTags) {
       (await tenantTags).map((tag) => {
         allTenantTags.push({
-          _id: idGenerate(getNanoid()) || '',
-          tag: tag.tagName
+          _id: getNanoid() || '',
+          tag: tag.value
         });
       });
     }

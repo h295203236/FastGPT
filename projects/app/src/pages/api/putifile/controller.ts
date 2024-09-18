@@ -2,6 +2,7 @@ import { GET } from '@fastgpt/service/common/api/httpRequest';
 
 const PUTI_URL: string = process.env.PUTI_URL || '';
 const PUTI_KEY: string = process.env.PUTI_KEY || '';
+const PUTI_FILE_APPID: string = process.env.PUTI_FILE_APPID || '';
 
 type PutifileResp<T> = {
   code: number;
@@ -31,11 +32,13 @@ type PutifileTagItemResp = {
   id: string;
   tagId: string;
   tagName: string;
-  tagValue: string;
+  tagCode: string;
+  value: string;
 };
 
 type ListPutifileReq = {
   tenantId: string;
+  appId: string;
   folder: string;
   lastSyncTime: number;
 };
@@ -53,9 +56,13 @@ type ListTagsReq = {
  */
 async function getFileUrl(tenantId: string, fileId: string): Promise<string> {
   const fileResp = await GET<PutifileResp<string>>(
-    `${PUTI_URL}/putifile/klg/file/${fileId}/temp-access-url`,
-    {},
-    { headers: { 'x-api-key': PUTI_KEY, tenantId: tenantId } }
+    `${PUTI_URL}/file/klg/file/${fileId}/temp-access-url`,
+    {
+      tenantId: tenantId,
+      appId: PUTI_FILE_APPID,
+      fileId: fileId
+    },
+    { headers: { 'x-api-key': PUTI_KEY } }
   );
   return fileResp.data;
 }
@@ -67,11 +74,14 @@ async function getFileUrl(tenantId: string, fileId: string): Promise<string> {
  */
 async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileItemResp[]> {
   const fileResp = await GET<PutifileResp<PutifileFileItemResp[]>>(
-    `${PUTI_URL}/putifile/klg/file/changed`,
+    `${PUTI_URL}/file/klg/file/changed`,
     {
-      ...params
+      tenantId: params.tenantId,
+      appId: PUTI_FILE_APPID,
+      folder: params.folder,
+      lastSyncTime: params.lastSyncTime
     },
-    { headers: { 'x-api-key': PUTI_KEY, tenantId: params.tenantId } }
+    { headers: { 'x-api-key': PUTI_KEY } }
   );
   return fileResp.data;
 }
@@ -83,7 +93,7 @@ async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileIt
  */
 async function listTags(req: ListTagsReq): Promise<PutifileTagItemResp[]> {
   const re = await GET<PutifileResp<PutifileTagItemResp[]>>(
-    `${PUTI_URL}/system/tag/list`,
+    `${PUTI_URL}/system/tag/list/all`,
     {
       keyword: ''
     },

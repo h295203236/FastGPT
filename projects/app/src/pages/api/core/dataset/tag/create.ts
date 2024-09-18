@@ -17,7 +17,7 @@ async function handler(req: NextApiRequest): Promise<void> {
   const teamidF = idGenerate(teamId);
   const datasetidF = idGenerate(datasetId);
   for (const tag of tags) {
-    const idF = idGenerate(tag._id);
+    const idF = tag._id;
     const existTag = await MongoDatasetCollectionTags.findById(idF).lean();
     if (!existTag) {
       await MongoDatasetCollectionTags.create({
