@@ -10,6 +10,7 @@ import { authOpenApiKey2 } from '@fastgpt/service/support/openapi/auth';
 type GetHistoriesBody = {
   appId: string;
   limit?: number;
+  searchKey?: string;
 };
 
 /**
@@ -26,10 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       teamId: teamId || '',
       userId: userId || ''
     });
-    const { appId, limit } = req.body as GetHistoriesBody;
+    const { appId, limit, searchKey } = req.body as GetHistoriesBody;
 
     const match = await (async () => {
-      if (appId) {
+      if (appId && searchKey) {
+        return {
+          tmbId,
+          appId,
+          title: { $regex: new RegExp(searchKey, 'i') },
+          source: ChatSourceEnum.online
+        };
+      } else if (appId) {
         return {
           tmbId,
           appId,

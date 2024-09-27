@@ -37,6 +37,9 @@ async function handler(req: ApiRequestProps<ListAppBody>): Promise<AppListItemTy
       parentId = parentAppFolder._id;
     }
   }
+  if (!parentId) {
+    return [];
+  }
 
   // 构建查询条件
   const findAppsQuery = (() => {
