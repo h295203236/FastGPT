@@ -280,11 +280,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           nodes,
           appChatConfig: chatConfig,
           variables: newVariables,
-          isUpdateUseTime: isOwnerUse && source === ChatSourceEnum.online, // owner update use time
+          isUpdateUseTime: isOwnerUse, // owner update use time
           newTitle,
           shareId,
           outLinkUid: undefined,
-          source,
+          source: ChatSourceEnum.online,
           content: [userQuestion, aiResponse],
           metadata: {
             originIp
