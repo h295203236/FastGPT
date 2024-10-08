@@ -4,6 +4,6 @@
 # make build name=app image=172.29.120.226:8088/fastgpt:v4.8.10
 
 # Docker cmd: Build image with proxy
-docker build -f ./projects/app/Dockerfile -t 172.29.120.226:8088/fastgpt:v4.8.10_r1 . --build-arg name=app --build-arg proxy=taobao
+docker build -f ./projects/app/Dockerfile -t 172.29.120.226:8088/fastgpt:v4.8.10_r7 . --build-arg name=app --build-arg proxy=taobao
 # Make cmd: Build image with proxy
 # make build name=app image=172.29.120.226:8088/fastgpt:v4.8.10 proxy=taobao
