@@ -49,7 +49,21 @@ export async function createOneCollection({
   [key: string]: any;
   session?: ClientSession;
 }) {
-  const collectionTags = await createOrGetCollectionTags({ tags, teamId, datasetId, session });
+  // 将父层级作为默认标签
+  let newTags = tags || [];
+  if (parentId) {
+    const parent = await MongoDatasetCollection.findById(parentId);
+    if (parent) {
+      newTags.push(parent.name);
+    }
+  }
+  newTags = Array.from(new Set(newTags));
+  const collectionTags = await createOrGetCollectionTags({
+    tags: newTags,
+    teamId,
+    datasetId,
+    session
+  });
   const [collection] = await MongoDatasetCollection.create(
     [
       {
