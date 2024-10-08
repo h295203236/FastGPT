@@ -13,6 +13,7 @@ import {
   TrainingStatusEnum
 } from '@fastgpt/global/core/dataset/constants';
 import { MongoDataset } from '@fastgpt/service/core/dataset/schema';
+import { MongoDatasetCollectionTags } from '@fastgpt/service/core/dataset/tag/schema';
 
 /**
  * putifile 重建数据集合
@@ -36,23 +37,73 @@ async function handler(
     return Promise.reject('dataset not found');
   }
 
+  // 创建集合标签
+  let collectionTags: any[] = [];
+  if (params.tags && Array.from(new Set(params.tags)).length > 0) {
+    // 遍历标签，然后获取，如果没有找到则创建
+    for (const tagName of Array.from(new Set(params.tags))) {
+      if (!tagName) {
+        continue;
+      }
+      const tag = await MongoDatasetCollectionTags.findOne({ tag: tagName });
+      if (!tag) {
+        collectionTags.push(
+          await MongoDatasetCollectionTags.create({
+            teamId: dataset.teamId,
+            datasetId: dataset._id,
+            tag: tagName
+          })
+        );
+      } else {
+        collectionTags.push(tag);
+      }
+    }
+  }
+
   // 重建数据集合
   await mongoSessionRun(async (session) => {
     // 删除原有数据集合
-    let collection;
     if (params.id) {
       const collections = await MongoDatasetCollection.find({ fileId: params.id }).session(session);
       if (collections && collections.length > 0) {
-        collection = collections[0];
-        await delCollectionAndRelatedSources({ collections: collections, session });
+        // 删除原有数据集合
+        await delCollectionAndRelatedSources({ collections, session });
       }
     }
 
     //console.log('putifile 重建数据集合:', collection);
-    if (!collection) {
-      // 创建
-      // 创建数据集合
-      const { _id: collectionId } = await createOneCollection({
+    // 创建数据集合
+    const { _id: collectionId } = await createOneCollection({
+      teamId: dataset.teamId,
+      tmbId: dataset.tmbId,
+      datasetId: params.datasetId,
+      parentId: params.parentId,
+      type: DatasetCollectionTypeEnum.externalFile,
+      name: params.filename || '',
+      forbid: false,
+      tags: params.tags,
+
+      // special metadata
+      trainingStatus: TrainingStatusEnum.pending,
+      trainingType: params.trainingType || TrainingModeEnum.chunk,
+      chunkSize: params.chunkSize || 4000,
+      chunkSplitter: params.chunkSplitter,
+      qaPrompt: params.qaPrompt,
+
+      externalFileId: params.externalFileId,
+      externalFileUrl: params.externalFileUrl,
+
+      hashRawText: undefined,
+      rawTextLength: undefined,
+
+      createTime: new Date(),
+      updateTime: new Date(),
+
+      session
+    });
+    // 如果时qa模式，做一个优化，在创建一个直接拆分的chunk
+    if (params.trainingType === TrainingModeEnum.qa) {
+      await createOneCollection({
         teamId: dataset.teamId,
         tmbId: dataset.tmbId,
         datasetId: params.datasetId,
@@ -60,12 +111,12 @@ async function handler(
         type: DatasetCollectionTypeEnum.externalFile,
         name: params.filename || '',
         forbid: false,
-        tags: [],
+        tags: params.tags,
 
         // special metadata
         trainingStatus: TrainingStatusEnum.pending,
-        trainingType: params.trainingType || TrainingModeEnum.chunk,
-        chunkSize: params.chunkSize || 700,
+        trainingType: TrainingModeEnum.chunk,
+        chunkSize: params.chunkSize || 4000,
         chunkSplitter: params.chunkSplitter,
         qaPrompt: params.qaPrompt,
 
@@ -80,38 +131,7 @@ async function handler(
 
         session
       });
-      return collectionId;
     }
-    // 创建数据集合
-    const { _id: collectionId } = await createOneCollection({
-      _id: collection._id,
-      teamId: collection.teamId,
-      tmbId: collection.tmbId,
-      datasetId: params.datasetId,
-      type: DatasetCollectionTypeEnum.putiFile,
-      name: params.filename || collection.name,
-      forbid: false,
-      tags: collection.tags,
-
-      // special metadata
-      trainingStatus: TrainingStatusEnum.pending,
-      trainingType: params.trainingType || TrainingModeEnum.chunk,
-      chunkSize: params.chunkSize || 700,
-      chunkSplitter: params.chunkSplitter,
-      qaPrompt: params.qaPrompt,
-
-      externalFileId: params.externalFileId,
-      externalFileUrl: params.externalFileUrl,
-
-      hashRawText: undefined,
-      rawTextLength: undefined,
-
-      createTime: collection.createTime || new Date(),
-      updateTime: new Date(),
-
-      session
-    });
-
     return collectionId;
   });
 

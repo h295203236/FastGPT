@@ -32,9 +32,14 @@ export type ImportSourceItemType = {
   externalFileId?: string;
 
   // putifile
-  name?: name;
-  policy?: policy;
-  folder?: folder;
+  putifile?: {
+    name: name;
+    policy: policy;
+    folder: folder;
+    lastSyncTime?: number;
+    updatedTime: number;
+    tags?: string[];
+  };
 };
 
 export type ImportSourceParamsType = UseFormReturn<

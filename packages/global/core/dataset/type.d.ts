@@ -81,7 +81,9 @@ export type DatasetCollectionSchemaType = {
   };
 
   // config
-  config?: Record<string, any>;
+  config?: {
+    [key: string]: any;
+  };
 };
 
 export type DatasetCollectionTagsSchemaType = {

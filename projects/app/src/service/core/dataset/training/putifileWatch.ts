@@ -17,11 +17,11 @@ import { UsageSourceEnum } from '@fastgpt/global/support/wallet/usage/constants'
 import { pushDataListToTrainingQueue } from '@fastgpt/service/core/dataset/training/controller';
 import { MongoDataset } from '@fastgpt/service/core/dataset/schema';
 import { hashStr } from '@fastgpt/global/common/string/tools';
+import { getFileUrl } from '@/pages/api/putifile/controller';
 
 // putifile配置
 const PUTI_URL = process.env.PUTI_URL || '';
 const PUTI_KEY = process.env.PUTI_KEY || '';
-const PUTI_TENANT = process.env.PUTI_TENANT || 0;
 
 type PutifileResp<T> = {
   code: number;
@@ -40,7 +40,6 @@ export const createDatasetCollectionMongoWatch = () => {
     try {
       if (change.operationType === 'insert') {
         const fullDocument = change.fullDocument as DatasetCollectionSchemaType;
-        console.log('putifile文件:开始解析嵌入......', fullDocument);
         const {
           _id,
           teamId,
@@ -57,11 +56,10 @@ export const createDatasetCollectionMongoWatch = () => {
           chunkSplitter
         } = fullDocument;
         if (
-          (type === DatasetCollectionTypeEnum.externalFile ||
-            type === DatasetCollectionTypeEnum.putiFile) &&
+          type === DatasetCollectionTypeEnum.externalFile &&
           trainingStatus === TrainingStatusEnum.pending
         ) {
-          console.log('putifile文件:开始解析嵌入......', _id, name);
+          console.log('putifile文件:开始解析嵌入......', _id, name, externalFileId);
           try {
             // 0.获取数据集
             const dataset = await MongoDataset.findById(datasetId);
@@ -70,13 +68,7 @@ export const createDatasetCollectionMongoWatch = () => {
             if (type === DatasetCollectionTypeEnum.externalFile && externalFileUrl) {
               fileUrl = externalFileUrl;
             } else {
-              const fileResp = await GET<PutifileResp<string>>(
-                `${PUTI_URL}/klg/file/${externalFileId}/temp-access-url`,
-                {},
-                { headers: { 'x-api-key': PUTI_KEY } }
-              );
-              console.log('putifile文件:获取文件地址成功.', _id, name, fileResp);
-              fileUrl = fileResp.data;
+              fileUrl = await getFileUrl(teamId, externalFileId || '');
             }
             console.log(
               'putifile文件:获取文件地址成功:',
@@ -91,7 +83,7 @@ export const createDatasetCollectionMongoWatch = () => {
               url: fileUrl,
               extension: name.split('.').pop()?.toLowerCase()
             });
-            console.log('putifile文件:获取文件内容成功:', _id, name, rawText);
+            // console.log('putifile文件:获取文件内容成功:', _id, name, rawText);
             // 3.创建数据分片
             const chunks = rawText2Chunks({
               rawText,

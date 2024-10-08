@@ -22,6 +22,7 @@ import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useRouter } from 'next/router';
 import { TabEnum } from '../../../index';
 import {
+  postCreateDatasetCollectionTag2,
   postCreateDatasetCsvTableCollection,
   postCreateDatasetExternalFileCollection,
   postCreateDatasetFileCollection,
@@ -55,15 +56,24 @@ const Upload = () => {
       // 如果时putifile文件，先创建对应的文件夹
       let newPerentId = parentId;
       if (importSource === ImportDataSourceEnum.putifile) {
+        // 获取files最大时间
+        const maxTime = Math.max(
+          ...filterWaitingSources.map((item) => item.putifile?.updatedTime || 0)
+        );
         const first = filterWaitingSources[0];
         newPerentId = await postDatasetCollection({
           datasetId: datasetDetail._id,
           parentId,
-          name: first.name,
+          name: first.putifile?.name,
           type: DatasetCollectionTypeEnum.putiFile,
+          trainingType: mode,
+          chunkSize: chunkSize,
+          chunkSplitter: customSplitChar,
+          qaPrompt: qaPrompt,
           config: {
-            policy: first.policy,
-            folder: first.folder
+            policy: first.putifile?.policy,
+            folder: first.putifile?.folder,
+            lastSyncTime: maxTime
           }
         });
       }
@@ -136,7 +146,8 @@ const Upload = () => {
             id: item.id,
             externalFileUrl: item.externalFileUrl,
             externalFileId: item.externalFileId,
-            filename: item.sourceName
+            filename: item.sourceName,
+            tags: item.putifile?.tags
           });
         }
 

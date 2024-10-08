@@ -75,7 +75,10 @@ export async function createOneCollection({
         rawTextLength,
         hashRawText,
         metadata,
-        tags: collectionTags
+        tags: collectionTags,
+
+        // config
+        config
       }
     ],
     { session }

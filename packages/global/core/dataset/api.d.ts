@@ -46,7 +46,9 @@ export type CreateDatasetCollectionParams = DatasetCollectionChunkMetadataType &
   hashRawText?: string;
 
   // config
-  config?: Record<string, any>;
+  config?: {
+    [key: string]: any;
+  };
 };
 
 export type ApiCreateDatasetCollectionParams = DatasetCollectionChunkMetadataType & {
@@ -139,4 +141,5 @@ export type PutifileFileReCreateDatasetCollectionParams = ApiCreateDatasetCollec
   externalFileId?: string;
   externalFileUrl: string;
   filename?: string;
+  tags?: string[];
 };

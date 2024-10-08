@@ -4,28 +4,6 @@ import { NextApiRequest } from 'next';
 import { authJWT } from '@fastgpt/service/support/permission/controller';
 import { getTokenFromCookie } from './tool';
 
-const supportFileTypes = [
-  'txt',
-  'csv',
-  'json',
-  'md',
-  'pdf',
-  'doc',
-  'docx',
-  'xls',
-  'xlsx',
-  'ppt',
-  'pptx'
-];
-
-type PutifileResp<T> = {
-  /** 状态码 */
-  code: number;
-  /** 消息 */
-  msg: string;
-  /** 数据 */
-  data: T;
-};
 type PutifileFileItemResp = {
   /** 文件ID */
   id: string;
@@ -61,18 +39,7 @@ async function handler(req: NextApiRequest): Promise<PutifileFileItemResp[]> {
   const { teamId } = await authJWT(token);
 
   // 获取文件列表
-  const files = await listChangedFiles({ tenantId: teamId, folder, lastSyncTime: 0 });
-  console.log('====> filesResponse:', files);
-  if (!files || files.length === 0) {
-    return [];
-  }
-
-  // 过滤掉不支持的文件类型
-  const supportFiles = files.filter((file) => {
-    const ext = file.fileName.split('.').pop()?.toLowerCase() || 'nothisext';
-    return supportFileTypes.includes(ext);
-  });
-  return supportFiles;
+  return await listChangedFiles({ tenantId: teamId, folder, lastSyncTime: 0 });
 }
 
 export default NextAPI(handler);

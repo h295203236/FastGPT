@@ -11,6 +11,7 @@ import { checkTimerLock } from '@fastgpt/service/common/system/timerLock/utils';
 import { TimerIdEnum } from '@fastgpt/service/common/system/timerLock/constants';
 import { addHours } from 'date-fns';
 import { getScheduleTriggerApp } from '@/service/core/app/utils';
+import { syncPutifileJob } from '@/service/events/syncPutifile';
 
 const setTrainingQueueCron = () => {
   setCron('*/1 * * * *', () => {
@@ -74,9 +75,17 @@ const scheduleTriggerAppCron = () => {
   });
 };
 
+// 定时同步putifile文件
+const startSyncPutifileTaskCron = () => {
+  setCron('*/5 * * * *', () => {
+    syncPutifileJob();
+  });
+};
+
 export const startCron = () => {
   setTrainingQueueCron();
   setClearTmpUploadFilesCron();
   clearInvalidDataCron();
   scheduleTriggerAppCron();
+  startSyncPutifileTaskCron();
 };

@@ -19,10 +19,13 @@ parentPort?.on('message', async (props: ReadRawTextProps<Uint8Array>) => {
       case 'pdf':
         return readPdfFile(params);
       case 'docx':
+      case 'doc':
         return readDocsFile(params);
       case 'pptx':
+      case 'ppt':
         return readPptxRawText(params);
       case 'xlsx':
+      case 'xls':
         return readXlsxRawText(params);
       case 'csv':
         return readCsvRawText(params);

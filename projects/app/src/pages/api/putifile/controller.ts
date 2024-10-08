@@ -4,6 +4,20 @@ const PUTI_URL: string = process.env.PUTI_URL || '';
 const PUTI_KEY: string = process.env.PUTI_KEY || '';
 const PUTI_FILE_APPID: string = process.env.PUTI_FILE_APPID || '';
 
+const supportFileTypes = [
+  'txt',
+  'csv',
+  'json',
+  'md',
+  'pdf',
+  'doc',
+  'docx',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx'
+];
+
 type PutifileResp<T> = {
   code: number;
   msg: string;
@@ -82,7 +96,13 @@ async function listChangedFiles(params: ListPutifileReq): Promise<PutifileFileIt
     },
     { headers: { 'x-api-key': PUTI_KEY } }
   );
-  return fileResp.data;
+  const files = fileResp.data || [];
+  // 过滤掉不支持的文件类型
+  const supportFiles = files.filter((file) => {
+    const ext = file.fileName.split('.').pop()?.toLowerCase() || 'nothisext';
+    return supportFileTypes.includes(ext);
+  });
+  return supportFiles;
 }
 
 /**

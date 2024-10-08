@@ -51,9 +51,13 @@ const CustomLinkInput = () => {
       sourceName: string;
       externalFileUrl: string;
       externalFileId: string;
-      name: string;
-      folder: string;
-      policy: string;
+      putifile: {
+        name: string;
+        policy: string;
+        folder: string;
+        updatedTime: number;
+        tags?: string[];
+      };
     }[];
   }>({
     defaultValues: {
@@ -62,9 +66,13 @@ const CustomLinkInput = () => {
           sourceName: '',
           externalFileUrl: '',
           externalFileId: '',
-          name: '',
-          folder: '',
-          policy: ''
+          putifile: {
+            name: '',
+            policy: '',
+            folder: '',
+            updatedTime: 0,
+            tags: []
+          }
         }
       ]
     }
@@ -92,7 +100,14 @@ const CustomLinkInput = () => {
     const list = files.map((item: PutifileFileItemResp) => {
       return {
         sourceName: item.fileName,
-        externalFileId: item.id
+        externalFileId: item.id,
+        putifile: {
+          name: '',
+          policy: '',
+          folder: '',
+          updatedTime: item.updatedTime,
+          tags: item.tags
+        }
       };
     });
     for (let i = 0; i < list.length; i++) {
@@ -122,8 +137,8 @@ const CustomLinkInput = () => {
         策略：
         <Select placeholder={'策略'} onChange={(e) => setPolicy(e.target.value)}>
           <option value="once">一次性导入</option>
-          <option value="sync_only_import_file">仅本次导入文件定期同步</option>
-          <option value="sync_folder">本文件夹定期同步</option>
+          {/* <option value="sync_only_import_file">仅本次导入文件定期同步</option> */}
+          <option value="sync_folder">本次导入后本定期同步变更文件</option>
         </Select>
       </Box>
       <TableContainer>
@@ -198,9 +213,12 @@ const CustomLinkInput = () => {
                   icon: getFileIcon(item.externalFileUrl),
                   externalFileId: item.externalFileId,
                   externalFileUrl: item.externalFileUrl,
-                  name: name,
-                  policy: policy,
-                  folder: folder
+                  putifile: {
+                    ...item.putifile,
+                    name,
+                    folder,
+                    policy: policy || 'sync_folder'
+                  }
                 }))
             );
 

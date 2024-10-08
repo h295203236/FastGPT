@@ -100,6 +100,11 @@ const DatasetCollectionSchema = new Schema({
   metadata: {
     type: Object,
     default: {}
+  },
+  // external file config
+  config: {
+    type: Object,
+    default: {}
   }
 });
 
